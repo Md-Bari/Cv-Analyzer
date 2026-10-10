@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f7fb;
+  --foreground: #14161f;
+  --surface: #ffffff;
+  --surface-2: #eef0f6;
+  --line: #dde1ec;
+  --muted: #646a7e;
+  --accent: #4f46e5;
+  --accent-soft: #e8e7fd;
+  --good: #15803d;
+  --warn: #b45309;
+  --bad: #c2410c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0c0d12;
+    --foreground: #e9eaf0;
+    --surface: #15171f;
+    --surface-2: #1f222d;
+    --line: #2c3040;
+    --muted: #9298ad;
+    --accent: #818cf8;
+    --accent-soft: #23244a;
+    --good: #4ade80;
+    --warn: #fbbf24;
+    --bad: #fb7185;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@utility card {
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 1.5rem;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
