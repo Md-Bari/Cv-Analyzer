@@ -80,3 +80,10 @@ class AnalyzeEndpointTests(SimpleTestCase):
         res = self.client.post(self.url, {"cv": SimpleUploadedFile("cv.png", b"x"), "jd_text": "x" * 60})
         self.assertEqual(res.status_code, 400)
         self.assertIn("Unsupported", res.json()["error"])
+
+    @patch("analyzer.views.analyze_with_llm", return_value=LLM_RESULT)
+    def test_edited_cv_text_instead_of_file(self, mock):
+        res = self.client.post(self.url, {"cv_text": CV_TEXT + " AWS", "jd_text": "x" * 60})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("AWS", mock.call_args.args[0])
+

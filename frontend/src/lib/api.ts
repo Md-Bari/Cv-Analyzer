@@ -39,15 +39,10 @@ export interface AnalysisResult {
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001").replace(/\/$/, "");
 
-export async function analyzeCv(cv: File, jd: { file?: File; text?: string }): Promise<AnalysisResult> {
-  const body = new FormData();
-  body.append("cv", cv);
-  if (jd.file) body.append("jd_file", jd.file);
-  else if (jd.text) body.append("jd_text", jd.text);
-
+async function post<T>(path: string, body: FormData, failure: string): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${API_URL}/api/analyze/`, { method: "POST", body });
+    res = await fetch(`${API_URL}${path}`, { method: "POST", body });
   } catch {
     throw new Error(
       `Cannot reach the analysis server at ${API_URL}. Check that the Django backend is running on that port ` +
@@ -57,7 +52,19 @@ export async function analyzeCv(cv: File, jd: { file?: File; text?: string }): P
 
   const data = await res.json().catch(() => null);
   if (!res.ok) {
-    throw new Error(data?.error ?? `Analysis failed (HTTP ${res.status}).`);
+    throw new Error(data?.error ?? `${failure} (HTTP ${res.status}).`);
   }
-  return data as AnalysisResult;
+  return data as T;
+}
+
+export async function analyzeCv(
+  cv: { file?: File; text?: string },
+  jd: { file?: File; text?: string },
+): Promise<AnalysisResult> {
+  const body = new FormData();
+  if (cv.text) body.append("cv_text", cv.text);
+  else if (cv.file) body.append("cv", cv.file);
+  if (jd.file) body.append("jd_file", jd.file);
+  else if (jd.text) body.append("jd_text", jd.text);
+  return post<AnalysisResult>("/api/analyze/", body, "Analysis failed");
 }
